@@ -7,10 +7,37 @@ from services.redis_client import (
     get_mood_trend,
     get_client_conversations,
     get_conversation,
+    get_therapist_clients,
+    register_client,
+    save_checkin_config,
+    get_checkin_config,
 )
 from services.claude_client import summarize_conversation
 
 router = APIRouter(prefix="/therapist", tags=["therapist"])
+
+
+@router.get("/clients/{therapist_id}")
+async def list_clients(therapist_id: str):
+    clients = await get_therapist_clients(therapist_id)
+    return {"therapist_id": therapist_id, "clients": clients}
+
+
+@router.post("/clients/{therapist_id}/add")
+async def add_client(therapist_id: str, client_id: str, name: str):
+    await register_client(client_id, name, therapist_id)
+    return {"status": "added", "client_id": client_id}
+
+
+@router.get("/checkin-config/{client_id}")
+async def get_checkin_config_route(client_id: str):
+    return await get_checkin_config(client_id)
+
+
+@router.post("/checkin-config/{client_id}")
+async def save_checkin_config_route(client_id: str, config: dict):
+    await save_checkin_config(client_id, config)
+    return {"status": "saved"}
 
 
 @router.post("/context")

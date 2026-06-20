@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.schemas import CheckInCreate, JournalPromptRequest
-from services.redis_client import save_checkin, get_recent_checkins, get_checkin, get_therapist_context
+from services.redis_client import save_checkin, get_recent_checkins, get_checkin, get_therapist_context, get_checkin_config, save_checkin_config
 from services.sentiment import analyze_sentiment
 from services.claude_client import generate_journal_prompt
 
@@ -44,3 +44,15 @@ async def get_journal_prompt(req: JournalPromptRequest):
         therapist_context,
     )
     return {"prompt": prompt}
+
+
+@router.get("/config/{client_id}")
+async def get_config(client_id: str):
+    config = await get_checkin_config(client_id)
+    return config
+
+
+@router.post("/config/{client_id}")
+async def save_config(client_id: str, config: dict):
+    await save_checkin_config(client_id, config)
+    return {"status": "saved"}

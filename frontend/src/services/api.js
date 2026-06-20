@@ -57,6 +57,21 @@ export const api = {
     return res.json();
   },
 
+  async getCheckinConfig(clientId) {
+    const res = await fetch(`${BASE}/checkin/config/${clientId}`);
+    if (!res.ok) return null;
+    return res.json();
+  },
+
+  async saveCheckinConfig(clientId, config) {
+    const res = await fetch(`${BASE}/checkin/config/${clientId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(config),
+    });
+    return res.json();
+  },
+
   // Streaming chat — returns an EventSource-like async generator
   streamMessage(clientId, message, conversationId = null) {
     return fetch(`${BASE}/chat/message`, {

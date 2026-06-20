@@ -93,6 +93,60 @@ async def get_client_conversations(client_id: str) -> List[str]:
     return list(await r.smembers(f"conversations:{client_id}"))
 
 
+# ── Check-in config (therapist-configured form) ────────────────────────────
+
+DEFAULT_CHECKIN_CONFIG = {
+    "sliders": [
+        {"key": "anxiety", "label": "Anxiety", "color": "#e74c3c"},
+        {"key": "energy",  "label": "Energy",  "color": "#2ecc71"},
+    ],
+    "button_groups": [
+        {
+            "key": "grapes",
+            "label": "GRAPES — what did you do today?",
+            "multi": True,
+            "items": ["Grateful", "Relax", "Accomplish", "Pleasure", "Exercise", "Social"],
+        },
+        {
+            "key": "self_care",
+            "label": "Self-care",
+            "multi": True,
+            "items": ["Showered", "Ate meals", "Took medication", "Got outside", "Slept well"],
+        },
+    ],
+}
+
+
+async def save_checkin_config(client_id: str, config: dict) -> None:
+    r = await get_redis()
+    await r.set(f"checkin_config:{client_id}", json.dumps(config))
+
+
+async def get_checkin_config(client_id: str) -> dict:
+    r = await get_redis()
+    raw = await r.get(f"checkin_config:{client_id}")
+    return json.loads(raw) if raw else DEFAULT_CHECKIN_CONFIG
+
+
+# ── Client registry ────────────────────────────────────────────────────────
+
+async def register_client(client_id: str, name: str, therapist_id: str) -> None:
+    r = await get_redis()
+    await r.hset(f"client:{client_id}", mapping={"name": name, "therapist_id": therapist_id})
+    await r.sadd(f"therapist_clients:{therapist_id}", client_id)
+
+
+async def get_therapist_clients(therapist_id: str) -> List[dict]:
+    r = await get_redis()
+    client_ids = list(await r.smembers(f"therapist_clients:{therapist_id}"))
+    clients = []
+    for cid in client_ids:
+        data = await r.hgetall(f"client:{cid}")
+        if data:
+            clients.append({"client_id": cid, **data})
+    return clients
+
+
 # ── Mood analytics ─────────────────────────────────────────────────────────
 
 async def get_mood_trend(client_id: str, days: int = 30) -> List[dict]:
