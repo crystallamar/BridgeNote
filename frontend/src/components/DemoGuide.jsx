@@ -54,7 +54,7 @@ const CLIENTS = [
     id: "client-004",
     name: "Maya K.",
     emoji: "📚",
-    tag: "Anxiety · Depression · University",
+    tag: "Anxiety · Depression · Student (pre-med)",
     color: "#e67e22",
     summary: "Sophomore at a top university in a pre-med program. First-generation college student from a low-income immigrant family. Came to therapy reluctantly — sees it as vulnerability. Can only meet every other week due to financial constraints.",
     context: [

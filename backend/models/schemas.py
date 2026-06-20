@@ -5,12 +5,12 @@ from datetime import datetime
 
 class CheckInCreate(BaseModel):
     client_id: str
-    mood_score: int  # 1-10
+    mood_score: int  # 1-5
     mood_label: Optional[str] = None
+    entry_date: Optional[str] = None      # YYYY-MM-DD, user-selected
     journal_entry: Optional[str] = None
-    sleep_hours: Optional[float] = None
-    anxiety_level: Optional[int] = None  # 1-10
-    energy_level: Optional[int] = None   # 1-10
+    slider_values: Optional[dict] = None  # {"anxiety": 7, "energy": 4, ...}
+    button_selections: Optional[dict] = None  # {"grapes": ["Exercise","Social"], ...}
 
 
 class CheckIn(CheckInCreate):
@@ -18,7 +18,6 @@ class CheckIn(CheckInCreate):
     timestamp: str
     sentiment_score: Optional[float] = None
     sentiment_label: Optional[str] = None
-    ai_prompt_used: Optional[str] = None
 
 
 class TherapistContext(BaseModel):
@@ -51,3 +50,4 @@ class JournalPromptRequest(BaseModel):
     client_id: str
     mood_score: int
     mood_label: Optional[str] = None
+    previous_prompt: Optional[str] = None  # passed on regen so Claude generates a different one

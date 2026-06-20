@@ -87,11 +87,12 @@ export default function CheckInForm({ clientId, onComplete }) {
     });
   };
 
-  const fetchPrompt = async () => {
+  const fetchPrompt = async (isRegen = false) => {
     setLoadingPrompt(true);
-    setJournalPrompt(null);
+    const prev = isRegen ? journalPrompt : null;
+    if (isRegen) setJournalPrompt(null);
     try {
-      const { prompt } = await api.getJournalPrompt(clientId, mood, moodFace?.label);
+      const { prompt } = await api.getJournalPrompt(clientId, mood, moodFace?.label, prev);
       setJournalPrompt(prompt);
     } catch {
       setJournalPrompt("What's been on your mind today? Write as much or as little as you'd like.");
@@ -101,7 +102,7 @@ export default function CheckInForm({ clientId, onComplete }) {
   };
 
   const handleDetailsNext = async () => {
-    await fetchPrompt();
+    await fetchPrompt(false);
     setStep("journal");
   };
 
@@ -161,23 +162,21 @@ export default function CheckInForm({ clientId, onComplete }) {
         <>
           <div className="date-row">
             <label className="date-label">Entry date</label>
-            <div className="date-options">
-              <button
-                className={`date-btn ${entryDate === today ? "date-btn--active" : ""}`}
-                onClick={() => setEntryDate(today)}
-              >
-                Today · {today}
-              </button>
-              {isLateNight && (
-                <button
-                  className={`date-btn ${entryDate === yesterdayStr ? "date-btn--active" : ""}`}
-                  onClick={() => setEntryDate(yesterdayStr)}
-                >
-                  Yesterday · {yesterdayStr}
-                </button>
-              )}
+            <div className="date-picker-wrap">
+              <input
+                type="date"
+                className="date-picker-input"
+                value={entryDate}
+                max={today}
+                onChange={e => e.target.value && setEntryDate(e.target.value)}
+              />
+              <span className="date-picker-hint">
+                {entryDate === today ? "Today" : entryDate === yesterdayStr ? "Yesterday" : entryDate}
+              </span>
             </div>
-            {isLateNight && <p className="date-hint">It's late — is this for yesterday?</p>}
+            {isLateNight && entryDate === today && (
+              <p className="date-hint">It's late — did you mean to log this for yesterday?</p>
+            )}
           </div>
 
           <h2>How are you feeling?</h2>
@@ -271,7 +270,7 @@ export default function CheckInForm({ clientId, onComplete }) {
             ) : (
               <p className="prompt-text">{journalPrompt || "What's been on your mind today?"}</p>
             )}
-            <button className="regen-btn" onClick={fetchPrompt} disabled={loadingPrompt}>
+            <button className="regen-btn" onClick={() => fetchPrompt(true)} disabled={loadingPrompt}>
               {loadingPrompt ? "…" : "↺ New prompt"}
             </button>
           </div>

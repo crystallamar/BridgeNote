@@ -42,6 +42,7 @@ async def get_journal_prompt(req: JournalPromptRequest):
         req.mood_score,
         req.mood_label,
         therapist_context,
+        previous_prompt=req.previous_prompt,
     )
     return {"prompt": prompt}
 

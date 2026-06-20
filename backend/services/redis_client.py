@@ -151,13 +151,15 @@ async def get_therapist_clients(therapist_id: str) -> List[dict]:
 
 async def get_mood_trend(client_id: str, days: int = 30) -> List[dict]:
     checkins = await get_recent_checkins(client_id, limit=days)
-    return [
-        {
-            "date": c["timestamp"][:10],
+    results = []
+    for c in checkins:
+        slider_vals = c.get("slider_values") or {}
+        entry = {
+            "date": c.get("entry_date") or c.get("timestamp", "")[:10],
             "mood_score": c.get("mood_score"),
-            "anxiety_level": c.get("anxiety_level"),
-            "energy_level": c.get("energy_level"),
             "sentiment_score": c.get("sentiment_score"),
         }
-        for c in checkins
-    ]
+        # Spread all slider values as top-level keys for the chart
+        entry.update(slider_vals)
+        results.append(entry)
+    return results

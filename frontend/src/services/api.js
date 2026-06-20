@@ -16,11 +16,16 @@ export const api = {
     return res.json();
   },
 
-  async getJournalPrompt(clientId, moodScore, moodLabel) {
+  async getJournalPrompt(clientId, moodScore, moodLabel, previousPrompt = null) {
     const res = await fetch(`${BASE}/checkin/journal-prompt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ client_id: clientId, mood_score: moodScore, mood_label: moodLabel }),
+      body: JSON.stringify({
+        client_id: clientId,
+        mood_score: moodScore,
+        mood_label: moodLabel,
+        previous_prompt: previousPrompt,
+      }),
     });
     return res.json();
   },

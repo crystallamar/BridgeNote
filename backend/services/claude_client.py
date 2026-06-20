@@ -14,18 +14,21 @@ def _format_checkins_for_prompt(checkins: List[dict]) -> str:
 
     lines = []
     for c in checkins:
-        date = c.get("timestamp", "")[:10]
+        date = c.get("entry_date") or c.get("timestamp", "")[:10]
         mood = c.get("mood_score", "N/A")
         label = c.get("mood_label", "")
-        anxiety = c.get("anxiety_level", "N/A")
-        energy = c.get("energy_level", "N/A")
-        sleep = c.get("sleep_hours", "N/A")
         sentiment = c.get("sentiment_label", "")
         journal = c.get("journal_entry", "")
 
-        entry = f"- {date}: Mood {mood}/10 ({label}), Anxiety {anxiety}/10, Energy {energy}/10, Sleep {sleep}h"
+        # Slider values (new format)
+        slider_vals = c.get("slider_values") or {}
+        slider_str = ", ".join(f"{k} {v}/10" for k, v in slider_vals.items()) if slider_vals else ""
+
+        entry = f"- {date}: Mood {mood}/5 ({label})"
+        if slider_str:
+            entry += f", {slider_str}"
         if sentiment:
-            entry += f", Journal sentiment: {sentiment}"
+            entry += f", journal sentiment: {sentiment}"
         if journal:
             snippet = journal[:200] + "..." if len(journal) > 200 else journal
             entry += f'\n  Journal: "{snippet}"'
@@ -123,25 +126,48 @@ async def generate_journal_prompt(
     mood_score: int,
     mood_label: Optional[str],
     therapist_context: Optional[dict],
+    previous_prompt: Optional[str] = None,
 ) -> str:
-    goals = []
-    if therapist_context:
-        goals = therapist_context.get("treatment_goals", [])
+    goals = therapist_context.get("treatment_goals", []) if therapist_context else []
+    diagnoses = therapist_context.get("diagnoses", []) if therapist_context else []
+    last_session = therapist_context.get("last_session_summary", "") if therapist_context else ""
 
-    context_hint = f"Their treatment goals include: {', '.join(goals)}." if goals else ""
+    context_parts = []
+    if goals:
+        context_parts.append(f"Treatment goals: {', '.join(goals)}")
+    if diagnoses:
+        context_parts.append(f"Working diagnoses: {', '.join(diagnoses)}")
+    if last_session:
+        context_parts.append(f"Last session: {last_session[:300]}")
 
-    prompt = f"""Generate a single, thoughtful journaling prompt for a therapy client who just reported:
-- Mood score: {mood_score}/10 ({mood_label or 'not labeled'})
-{context_hint}
+    context_hint = "\n".join(context_parts)
 
-The prompt should be open-ended, non-leading, and appropriate for their current emotional state. If mood is low (1-4), be especially gentle and focus on self-compassion. If moderate (5-7), encourage reflection. If high (8-10), invite savoring and growth. Return only the prompt text, no preamble."""
+    avoid_hint = ""
+    if previous_prompt:
+        avoid_hint = f"\n\nIMPORTANT: The client just saw this prompt and wants a new one. Generate something genuinely DIFFERENT — different angle, different topic, different style:\n\"{previous_prompt}\""
+
+    system = """You generate single journaling prompts for therapy clients. Each prompt must be:
+- One to two sentences maximum
+- Open-ended and non-leading
+- Emotionally appropriate for the client's current mood
+- Specific enough to spark real reflection (not generic)
+- Fresh and varied — avoid clichés
+
+Return ONLY the prompt text. No intro, no preamble, no quotes."""
+
+    user_msg = f"""Client mood: {mood_score}/5 ({mood_label or 'unspecified'})
+
+{context_hint}{avoid_hint}
+
+Write a journaling prompt tailored to this specific person and their current state."""
 
     message = client.messages.create(
         model=MODEL,
-        max_tokens=200,
-        messages=[{"role": "user", "content": prompt}],
+        max_tokens=150,
+        system=system,
+        messages=[{"role": "user", "content": user_msg}],
     )
-    return message.content[0].text
+    return message.content[0].text.strip('"').strip()
 
 
 async def summarize_conversation(messages: List[dict]) -> str:

@@ -12,7 +12,16 @@ const SUGGESTED_STARTERS = [
 export default function ChatWindow({ clientId }) {
   const { messages, sendMessage, isStreaming, reset } = useChat(clientId);
   const [input, setInput] = useState("");
+  const [backendOnline, setBackendOnline] = useState(null); // null = checking
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/checkin/config/${clientId}`, { signal: AbortSignal.timeout(4000) })
+      .then(r => { if (!cancelled) setBackendOnline(r.ok); })
+      .catch(() => { if (!cancelled) setBackendOnline(false); });
+    return () => { cancelled = true; };
+  }, [clientId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,9 +80,11 @@ export default function ChatWindow({ clientId }) {
                 </button>
               ))}
             </div>
-            <p className="offline-note">
-              ⚠️ Requires backend running to respond. Start with <code>uvicorn main:app --reload</code>.
-            </p>
+            {backendOnline === false && (
+              <p className="offline-note">
+                ⚠️ Backend offline — responses won't work. Start with: <code>uvicorn main:app --reload</code>
+              </p>
+            )}
           </div>
         )}
 

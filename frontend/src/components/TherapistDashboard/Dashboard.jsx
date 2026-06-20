@@ -12,7 +12,7 @@ const DEMO_CLIENTS = [
   { client_id: "client-001", name: "Alex M.",   tag: "GAD · Social Anxiety" },
   { client_id: "client-002", name: "Jordan R.", tag: "Depression · GRAPES focus" },
   { client_id: "client-003", name: "Sam T.",    tag: "PTSD Recovery" },
-  { client_id: "client-004", name: "Maya K.",   tag: "Anxiety · Depression · University" },
+  { client_id: "client-004", name: "Maya K.",   tag: "Anxiety · Depression · Student (pre-med)" },
 ];
 
 const PRESET_SLIDERS = [
@@ -295,7 +295,7 @@ export default function TherapistDashboard() {
                 <p className="empty-state">No check-in data yet.</p>
               )}
 
-              {data?.mood_trend?.some(d => d.anxiety_level) && (
+              {checkinConfig?.sliders?.length > 0 && data?.mood_trend?.length > 0 && (
                 <>
                   <h3 style={{ marginTop: 28 }}>Slider metrics</h3>
                   <ResponsiveContainer width="100%" height={200}>
@@ -305,8 +305,9 @@ export default function TherapistDashboard() {
                       <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="anxiety_level" fill="#e74c3c" name="Anxiety"  radius={[4,4,0,0]} />
-                      <Bar dataKey="energy_level"  fill="#2ecc71" name="Energy"   radius={[4,4,0,0]} />
+                      {checkinConfig.sliders.map(s => (
+                        <Bar key={s.key} dataKey={s.key} fill={s.color} name={s.label} radius={[4,4,0,0]} />
+                      ))}
                     </BarChart>
                   </ResponsiveContainer>
                 </>
