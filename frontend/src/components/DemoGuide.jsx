@@ -50,6 +50,23 @@ const CLIENTS = [
     chatDemo: "Try asking: \"I had a nightmare last night. I'm tired and on edge today.\"",
     checkinNote: "Sliders: Feeling safe + Anxiety. Buttons: Grounding practices, Sleep quality, Body check.",
   },
+  {
+    id: "client-004",
+    name: "Maya K.",
+    emoji: "📚",
+    tag: "Anxiety · Depression · University",
+    color: "#e67e22",
+    summary: "Sophomore at a top university in a pre-med program. First-generation college student from a low-income immigrant family. Came to therapy reluctantly — sees it as vulnerability. Can only meet every other week due to financial constraints.",
+    context: [
+      "Treatment goals: self-compassion, separate self-worth from grades, challenge imposter syndrome",
+      "Diagnoses: GAD, MDD (mild-moderate) · No medication currently",
+      "Key triggers: exam results, calls home about grades, seeing peers succeed, scholarship pressure",
+      "Last session: got a lower midterm grade, catastrophized about losing scholarship — walked through actual requirements vs. fear",
+      "Session frequency: every other week (financial constraint)",
+    ],
+    chatDemo: "Try: \"I got a bad grade and I feel like everything is ruined. My parents sacrificed so much for me to be here.\"",
+    checkinNote: "Sliders: Anxiety, Low mood, Academic stress. Buttons: Academic check-in, Self-compassion moments, Basic care.",
+  },
 ];
 
 export default function DemoGuide({ onClose }) {

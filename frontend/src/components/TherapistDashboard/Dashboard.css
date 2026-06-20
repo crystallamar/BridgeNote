@@ -151,6 +151,71 @@
 .summary-meta { font-size: 12px; color: #bbb; margin-bottom: 6px; }
 .summary-card p { margin: 0; font-size: 14px; color: #444; line-height: 1.6; white-space: pre-wrap; }
 
+/* ── Chart legend ── */
+.chart-legend-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  font-size: 12px; margin-bottom: 8px;
+}
+.legend-item { font-weight: 500; }
+
+/* ── Empty context prompt ── */
+.empty-context-prompt {
+  text-align: center; padding: 30px 20px;
+  background: #fafafa; border-radius: 12px;
+  border: 1px dashed #ddd; margin-bottom: 24px;
+}
+.empty-context-prompt p { color: #aaa; margin-bottom: 12px; }
+
+/* ── Client readonly field ── */
+.client-readonly {
+  padding: 9px 12px; background: #f5f5f5; border-radius: 8px;
+  font-size: 14px; color: #333; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.client-id-badge {
+  font-size: 11px; color: #aaa; font-weight: 400; font-family: monospace;
+}
+
+/* ── Check-in config modal ── */
+.config-section { margin-bottom: 20px; }
+.config-section-label {
+  font-size: 13px; font-weight: 700; color: #333;
+  margin: 0 0 10px; display: block;
+}
+.config-hint { font-weight: 400; color: #aaa; font-size: 12px; margin-left: 6px; }
+
+.config-toggle-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.config-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border: 1.5px solid #eee; border-radius: 10px;
+  cursor: pointer; font-size: 13px; color: #555; font-weight: 500;
+  transition: all 0.15s; user-select: none;
+}
+.config-toggle input { display: none; }
+.config-toggle:hover { border-color: #a8a4f5; }
+.config-toggle--on { border-color: #6c63ff; background: #f0eeff; color: #5a50e0; }
+
+.toggle-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+}
+
+.config-group-toggle {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px;
+  cursor: pointer; margin-bottom: 8px; transition: all 0.15s; user-select: none;
+}
+.config-group-toggle input { margin-top: 2px; accent-color: #6c63ff; }
+.config-group-toggle:hover { border-color: #a8a4f5; }
+.config-group-toggle--on { border-color: #6c63ff; background: #f0eeff; }
+.config-group-toggle--on strong { color: #5a50e0; }
+
+.group-toggle-info { display: flex; flex-direction: column; gap: 3px; }
+.group-toggle-info strong { font-size: 13px; color: #333; }
+.group-items-preview { font-size: 12px; color: #aaa; }
+
 /* ── Modal ── */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.4);

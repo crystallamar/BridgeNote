@@ -11,6 +11,7 @@ const DEMO_CLIENTS = [
   { id: "client-001", name: "Alex M.",   initials: "AM" },
   { id: "client-002", name: "Jordan R.", initials: "JR" },
   { id: "client-003", name: "Sam T.",    initials: "ST" },
+  { id: "client-004", name: "Maya K.",   initials: "MK" },
 ];
 
 function NavBar({ clientId, setClientId, onShowGuide }) {

@@ -19,7 +19,7 @@ export default function ChatWindow({ clientId }) {
   }, [messages]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isStreaming) return;
     sendMessage(input.trim());
     setInput("");
   };
@@ -31,40 +31,59 @@ export default function ChatWindow({ clientId }) {
     }
   };
 
+  const handleStarterClick = (text) => {
+    sendMessage(text);
+  };
+
   return (
     <div className="chat-window">
       <div className="chat-header">
         <div className="chat-avatar">B</div>
         <div>
-          <h2>BridgeNote</h2>
+          <h2>BridgeNote Chat</h2>
           <p className="chat-subtitle">Your between-session support space</p>
         </div>
-        <button className="new-chat-btn" onClick={reset} title="New conversation">
-          + New
-        </button>
+        <div className="chat-header-right">
+          <button
+            className="new-chat-btn"
+            onClick={reset}
+            title="Clear current conversation and start a new one"
+          >
+            + New conversation
+          </button>
+        </div>
       </div>
 
       <div className="chat-messages">
         {messages.length === 0 && (
           <div className="chat-empty">
             <p className="chat-welcome">Hi, I'm here to support you between sessions.</p>
-            <p className="chat-welcome-sub">What's on your mind today?</p>
+            <p className="chat-welcome-sub">What's on your mind today? Tap a suggestion or type your own.</p>
             <div className="starters">
               {SUGGESTED_STARTERS.map((s) => (
-                <button key={s} className="starter-btn" onClick={() => sendMessage(s)}>
+                <button
+                  key={s}
+                  className="starter-btn"
+                  onClick={() => handleStarterClick(s)}
+                  disabled={isStreaming}
+                >
                   {s}
                 </button>
               ))}
             </div>
+            <p className="offline-note">
+              ⚠️ Requires backend running to respond. Start with <code>uvicorn main:app --reload</code>.
+            </p>
           </div>
         )}
 
         {messages.map((msg, i) => (
           <div key={i} className={`message message--${msg.role} ${msg.error ? "message--error" : ""}`}>
             <div className="message-bubble">
-              {msg.content || (msg.role === "assistant" && isStreaming && i === messages.length - 1 ? (
-                <span className="typing-indicator"><span /><span /><span /></span>
-              ) : null)}
+              {msg.content || (msg.role === "assistant" && isStreaming && i === messages.length - 1
+                ? <span className="typing-indicator"><span /><span /><span /></span>
+                : null
+              )}
             </div>
             {msg.timestamp && (
               <span className="message-time">
@@ -82,7 +101,7 @@ export default function ChatWindow({ clientId }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKey}
-          placeholder="Type a message… (Enter to send)"
+          placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
           rows={2}
           disabled={isStreaming}
         />
@@ -96,7 +115,7 @@ export default function ChatWindow({ clientId }) {
       </div>
 
       <p className="chat-disclaimer">
-        BridgeNote is not a crisis service. If you're in crisis, call or text 988.
+        BridgeNote is not a crisis service. If you're in crisis, call or text <strong>988</strong>.
       </p>
     </div>
   );

@@ -223,6 +223,89 @@ SAM = {
 }
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# CLIENT 4: Maya — college student, anxiety/depression, family pressure
+# ──────────────────────────────────────────────────────────────────────────────
+MAYA = {
+    "id": "client-004",
+    "name": "Maya K.",
+    "context": {
+        "therapist_id": THERAPIST_ID,
+        "client_id": "client-004",
+        "client_name": "Maya K.",
+        "treatment_goals": [
+            "Build self-compassion and separate self-worth from academic performance",
+            "Reduce perfectionism-driven anxiety around grades and family expectations",
+            "Challenge imposter syndrome and 'I don't belong here' thoughts",
+            "Establish sustainable study habits that include rest",
+            "Become more comfortable with the therapy process itself",
+        ],
+        "diagnoses": ["Generalized Anxiety Disorder", "Major Depressive Disorder (mild to moderate)"],
+        "medications": [],
+        "triggers": [
+            "exam results", "comparing herself to peers", "calls home with parents asking about grades",
+            "financial stress and scholarship conditions", "seeing high-achieving classmates on social media"
+        ],
+        "strengths": [
+            "incredibly hard-working and resilient", "deep care for others", "intellectual curiosity",
+            "first in family to attend university — remarkable achievement", "humor when she opens up"
+        ],
+        "notes": (
+            "Maya came to therapy reluctantly — she initially saw it as 'a sign of weakness' and was worried about cost. "
+            "We meet every other week due to financial constraints; she's on a full scholarship with income restrictions. "
+            "Her parents are first-generation immigrants who sacrificed a great deal for her to attend university — this creates "
+            "enormous pressure. She's pre-med and struggling with a demanding courseload. Key pattern: she catastrophizes after "
+            "one bad exam as if her entire future is ruined. Self-compassion work is the most important thread to pull. "
+            "Build trust slowly — she was hesitant about sharing at first but is opening up. Do NOT push too hard too fast."
+        ),
+        "last_session_date": (datetime.utcnow() - timedelta(days=10)).strftime("%Y-%m-%d"),
+        "last_session_summary": (
+            "Maya got a lower grade than expected on a midterm and spent the week convinced she'd lose her scholarship. "
+            "We walked through the actual scholarship requirements vs. her catastrophized version — the facts were much less "
+            "dire than she feared. Practiced the 'double standard technique': what would you say to a friend in this situation? "
+            "She acknowledged she'd never speak to a friend the way she speaks to herself. Small breakthrough. "
+            "Homework: catch one moment of self-criticism this week and write an alternative self-compassionate response."
+        ),
+    },
+    "checkin_config": {
+        "sliders": [
+            {"key": "anxiety",    "label": "Anxiety",         "color": "#e74c3c"},
+            {"key": "depression", "label": "Low mood",        "color": "#9b59b6"},
+            {"key": "stress",     "label": "Academic stress", "color": "#e67e22"},
+        ],
+        "button_groups": [
+            {
+                "key": "academics",
+                "label": "Academic check-in",
+                "multi": True,
+                "items": ["Attended class", "Studied", "Asked for help", "Took a break", "Submitted work on time"],
+            },
+            {
+                "key": "self_compassion",
+                "label": "Self-compassion moments",
+                "multi": True,
+                "items": ["Caught a self-critical thought", "Rewrote it kindly", "Gave myself credit", "Rested without guilt", "Reached out to someone"],
+            },
+            {
+                "key": "basics",
+                "label": "Basic care",
+                "multi": True,
+                "items": ["Ate a real meal", "Slept 7+ hours", "Left my room", "Did something fun", "Avoided comparing myself online"],
+            },
+        ],
+    },
+    "journals": [
+        "Got a 74 on the orgo exam. I know it's not failing but it feels like everything is falling apart. Trying to remember what we talked about — would I say this to a friend?",
+        "Study group helped today. Felt like I actually belonged for a bit. Then saw someone else's grade and the comparison started again.",
+        "Didn't go to class this morning. Couldn't get out of bed. But I made myself eat lunch and called my roommate to talk, which helped.",
+        "Called home. My mom asked about my GPA and I just said 'fine.' I couldn't tell her about the exam. I hate lying but I can't handle the guilt on top of everything.",
+        "I actually asked the professor a question today after class. It felt huge and tiny at the same time. They were really nice.",
+        None,
+        "Therapy reminder: I don't have to earn my right to rest.",
+    ],
+}
+
+
 async def seed_client(client_data: dict):
     cid = client_data["id"]
     name = client_data["name"]
@@ -273,7 +356,7 @@ async def main():
     print("🌱 BridgeNote Demo Seed")
     print("=" * 40)
 
-    for client in [ALEX, JORDAN, SAM]:
+    for client in [ALEX, JORDAN, SAM, MAYA]:
         await seed_client(client)
 
     print("\n✅ Done! Start the backend (uvicorn main:app --reload) and frontend (npm start) to explore the demo.")
@@ -281,6 +364,7 @@ async def main():
     print("  client-001 — Alex M.   (GAD, social anxiety)")
     print("  client-002 — Jordan R. (Depression, GRAPES focus)")
     print("  client-003 — Sam T.    (PTSD recovery)")
+    print("  client-004 — Maya K.   (College anxiety/depression, biweekly)")
     print("\nTherapist ID: therapist-001")
 
 
