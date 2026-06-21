@@ -377,6 +377,12 @@ ETHAN = {
                 "multi": True,
                 "items": ["Ate properly", "Slept 7+ hours", "Exercised or moved", "Did something non-academic", "Connected with a friend"],
             },
+            {
+                "key": "got_in_the_way",
+                "label": "What got in the way?",
+                "multi": True,
+                "items": ["Compared myself to peers", "Stayed up past midnight", "Skipped a meal", "Avoided something I needed to do", "Doom-scrolled / distracted myself", "Isolated — did not reach out"],
+            },
         ],
     },
     "journals": [
