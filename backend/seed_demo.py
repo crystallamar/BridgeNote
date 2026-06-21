@@ -324,9 +324,12 @@ async def seed_client(client_data: dict):
     await save_checkin_config(cid, client_data["checkin_config"])
     print(f"  ✓ Saved check-in config")
 
-    # 7 days of check-ins
+    # 7 days of check-ins — spread across the last 7 days with proper entry_date
     moods = [3, 4, 2, 4, 5, 3, 4]  # varied but trending okay
     for i, (mood, journal) in enumerate(zip(moods, client_data["journals"])):
+        day_offset = 6 - i  # i=0 → 6 days ago, i=6 → today
+        entry_date = (datetime.utcnow() - timedelta(days=day_offset)).strftime("%Y-%m-%d")
+
         sliders = {}
         for s in client_data["checkin_config"]["sliders"]:
             sliders[s["key"]] = random.randint(3, 8)
@@ -339,6 +342,7 @@ async def seed_client(client_data: dict):
 
         checkin = {
             "client_id": cid,
+            "entry_date": entry_date,
             "mood_score": mood,
             "mood_label": ["","Struggling","Difficult","Okay","Good","Great"][mood],
             "slider_values": sliders,
@@ -346,7 +350,7 @@ async def seed_client(client_data: dict):
             "journal_entry": journal,
         }
         checkin_id = await save_checkin(checkin)
-        print(f"  ✓ Day -{7-i}: mood={mood}, checkin={checkin_id[:8]}…")
+        print(f"  ✓ {entry_date}: mood={mood}, checkin={checkin_id[:8]}…")
 
 
 async def main():

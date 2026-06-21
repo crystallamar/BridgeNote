@@ -58,12 +58,27 @@ export default function CheckInForm({ clientId, onComplete }) {
   const [entryDate, setEntryDate] = useState(today);
 
   useEffect(() => {
+    let live = true;
     api.getCheckinConfig(clientId)
       .then(cfg => {
+        if (!live) return;
         if (cfg && (cfg.sliders || cfg.button_groups)) setConfig(cfg);
         setBackendOnline(true);
       })
-      .catch(() => setBackendOnline(false));
+      .catch(() => { if (live) setBackendOnline(false); });
+    return () => { live = false; };
+  }, [clientId]);
+
+  // Re-fetch when therapist updates config from the dashboard (same browser session)
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail?.client_id !== clientId) return;
+      api.getCheckinConfig(clientId)
+        .then(cfg => { if (cfg && (cfg.sliders || cfg.button_groups)) setConfig(cfg); })
+        .catch(() => {});
+    };
+    window.addEventListener("checkinConfigUpdated", handler);
+    return () => window.removeEventListener("checkinConfigUpdated", handler);
   }, [clientId]);
 
   useEffect(() => {

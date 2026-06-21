@@ -131,6 +131,8 @@ export default function TherapistDashboard() {
       await api.saveCheckinConfig(selectedClient.client_id, newConfig);
       setCheckinConfig(newConfig);
       setConfigModal(false);
+      // Signal the check-in form to reload config
+      window.dispatchEvent(new CustomEvent("checkinConfigUpdated", { detail: { client_id: selectedClient.client_id } }));
     } catch {
       alert("Could not save — backend offline.");
     } finally {

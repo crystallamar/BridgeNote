@@ -51,7 +51,7 @@ def _build_system_prompt(
 
 Always be warm, curious, and grounded. Use open-ended questions. Reflect back what you hear. Never give medical advice."""
 
-    # Inject therapist context
+    # Inject therapist context — capped at 300 words
     therapist_section = ""
     if therapist_context:
         name = therapist_context.get("client_name", "the client")
@@ -63,9 +63,7 @@ Always be warm, curious, and grounded. Use open-ended questions. Reflect back wh
         last_date = therapist_context.get("last_session_date", "")
         notes = therapist_context.get("notes", "")
 
-        therapist_section = f"""
-
-## Client Context (provided by therapist — confidential)
+        raw_section = f"""## Client Context (provided by therapist — confidential)
 **Client name:** {name}
 **Treatment goals:** {', '.join(goals) if goals else 'Not specified'}
 **Known triggers:** {', '.join(triggers) if triggers else 'None specified'}
@@ -76,6 +74,12 @@ Always be warm, curious, and grounded. Use open-ended questions. Reflect back wh
 **Therapist notes:** {notes or 'None'}
 
 Use this context to personalize your responses. Reference treatment goals when relevant. Avoid naming diagnoses directly unless the client brings them up first."""
+
+        # Truncate to 300 words maximum
+        words = raw_section.split()
+        if len(words) > 300:
+            raw_section = " ".join(words[:300]) + "…"
+        therapist_section = "\n\n" + raw_section
 
     # Inject recent check-in history
     checkin_section = f"""
@@ -107,9 +111,11 @@ def stream_chat(
     conversation_history: List[dict],
     user_message: str,
 ) -> anthropic.Stream:
+    # Cap history at last 10 messages to stay within token budget
+    capped = conversation_history[-10:] if len(conversation_history) > 10 else conversation_history
     messages = [
         {"role": m["role"], "content": m["content"]}
-        for m in conversation_history
+        for m in capped
         if m["role"] in ("user", "assistant")
     ]
     messages.append({"role": "user", "content": user_message})
