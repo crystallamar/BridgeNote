@@ -2,6 +2,24 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import json
 import uuid
+import time
+from collections import defaultdict
+
+router = APIRouter(prefix="/chat", tags=["chat"])
+
+# Simple in-memory rate limiter — max 30 messages per client per 60 seconds
+_RATE_WINDOW = 60
+_RATE_MAX = 30
+_request_log: dict = defaultdict(list)
+
+def _check_rate_limit(client_id: str) -> bool:
+    now = time.time()
+    cutoff = now - _RATE_WINDOW
+    _request_log[client_id] = [t for t in _request_log[client_id] if t > cutoff]
+    if len(_request_log[client_id]) >= _RATE_MAX:
+        return False
+    _request_log[client_id].append(now)
+    return True
 
 from models.schemas import ChatRequest
 from services.claude_client import build_dynamic_system_prompt, stream_chat, summarize_conversation
@@ -11,9 +29,6 @@ from services.redis_client import (
     create_conversation,
     get_client_conversations,
 )
-
-router = APIRouter(prefix="/chat", tags=["chat"])
-
 
 @router.post("/start")
 async def start_conversation(client_id: str):
@@ -28,6 +43,9 @@ async def send_message(req: ChatRequest):
     Send a message and get a streaming Claude response.
     Pulls therapist context + recent check-ins from Redis to build a dynamic system prompt.
     """
+    if not _check_rate_limit(req.client_id):
+        raise HTTPException(status_code=429, detail="Too many messages — please wait a moment before sending again.")
+
     conv_id = req.conversation_id
     if not conv_id:
         conv_id = await create_conversation(req.client_id)
