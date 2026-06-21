@@ -102,7 +102,9 @@ export default function CheckInForm({ clientId, onComplete }) {
 
   useEffect(() => {
     const defaults = {};
-    config.sliders.forEach(s => { defaults[s.key] = 5; });
+    config.sliders.forEach(s => {
+      defaults[s.key] = SLIDER_DIRECTION[s.key] === "higher_better" ? 7 : 4;
+    });
     setSliders(defaults);
     const bDefaults = {};
     config.button_groups.forEach(g => { bDefaults[g.key] = new Set(); });
