@@ -8,10 +8,11 @@ import "./App.css";
 
 // Demo clients matching seed_demo.py
 const DEMO_CLIENTS = [
-  { id: "client-001", name: "Alex M.",   initials: "AM" },
-  { id: "client-002", name: "Jordan R.", initials: "JR" },
-  { id: "client-003", name: "Sam T.",    initials: "ST" },
-  { id: "client-004", name: "Maya K.",   initials: "MK" },
+  { id: "client-001", name: "Alex Morales",       initials: "AM" },
+  { id: "client-002", name: "Jordan Reid",        initials: "JR" },
+  { id: "client-003", name: "Sam Tran",           initials: "ST" },
+  { id: "client-004", name: "Maya Krishnamurthy", initials: "MK" },
+  { id: "client-005", name: "Ethan Rhodes",       initials: "ER" },
 ];
 
 function NavBar({ clientId, setClientId, onShowGuide }) {
