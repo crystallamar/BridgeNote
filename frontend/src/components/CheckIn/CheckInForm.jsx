@@ -10,6 +10,25 @@ const FACES = [
   { score: 5, emoji: "😄", label: "Great",       color: "#27ae60" },
 ];
 
+const SLIDER_DIRECTION = {
+  anxiety:    "lower_better",
+  depression: "lower_better",
+  stress:     "lower_better",
+  energy:     "higher_better",
+  motivation: "higher_better",
+  safety:     "higher_better",
+  sleep:      "higher_better",
+};
+
+function sliderValueColor(val, key) {
+  const dir = SLIDER_DIRECTION[key] || "higher_better";
+  const isLow = val <= 3, isMid = val <= 6;
+  if (dir === "lower_better") {
+    return isLow ? "#2ecc71" : isMid ? "#f39c12" : "#e74c3c";
+  }
+  return isLow ? "#e74c3c" : isMid ? "#f39c12" : "#2ecc71";
+}
+
 const DEFAULT_CONFIG = {
   sliders: [
     { key: "anxiety", label: "Anxiety",  color: "#e74c3c" },
@@ -230,13 +249,13 @@ export default function CheckInForm({ clientId, onComplete }) {
               {config.sliders.map(s => (
                 <div className="detail-row" key={s.key}>
                   <label>
-                    {s.label}:&nbsp;<strong style={{ color: s.color }}>{sliders[s.key] ?? 5}/10</strong>
+                    {s.label}:&nbsp;<strong style={{ color: sliderValueColor(sliders[s.key] ?? 5, s.key) }}>{sliders[s.key] ?? 5}/10</strong>
                   </label>
                   <input
                     type="range" min="1" max="10"
                     value={sliders[s.key] ?? 5}
                     onChange={e => setSliders(prev => ({ ...prev, [s.key]: Number(e.target.value) }))}
-                    style={{ accentColor: s.color }}
+                    style={{ accentColor: sliderValueColor(sliders[s.key] ?? 5, s.key) }}
                   />
                   <div className="slider-ends"><span>Low</span><span>High</span></div>
                 </div>

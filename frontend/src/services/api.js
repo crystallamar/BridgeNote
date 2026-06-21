@@ -77,6 +77,12 @@ export const api = {
     return res.json();
   },
 
+  async getConversationSummary(convId) {
+    const res = await fetch(`${BASE}/therapist/conversation-summary/${convId}`);
+    if (!res.ok) return { conversation_id: convId, summary: null };
+    return res.json();
+  },
+
   // Streaming chat — returns an EventSource-like async generator
   streamMessage(clientId, message, conversationId = null) {
     return fetch(`${BASE}/chat/message`, {

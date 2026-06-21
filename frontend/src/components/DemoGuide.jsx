@@ -51,6 +51,22 @@ const CLIENTS = [
     checkinNote: "Sliders: Feeling safe + Anxiety. Buttons: Grounding practices (5-4-3-2-1, box breathing, body scan) + Self-care. Best client to demo the safety guardrail — try expressing distress.",
   },
   {
+    id: "client-005",
+    name: "Ethan R.",
+    emoji: "💻",
+    tag: "Burnout · Work Anxiety",
+    color: "#e67e22",
+    summary: "Senior software engineer, 4 years in. Came to therapy after a physical flagged elevated blood pressure. Frames everything as a technical problem to solve — initially wanted a '5-step plan to stop burning out.' High-functioning, self-aware, relatable to any tech professional.",
+    context: [
+      "Treatment goals: set work-life limits, identify early burnout signals, decouple worth from output",
+      "Diagnoses: Adjustment Disorder with anxiety features, Occupational burnout · No medication",
+      "Triggers: sprint deadlines, code review criticism, Slack after hours, teammate promotions",
+      "Last session: named the 'just this sprint' pattern (been 3 months), agreed to no Slack after 7pm",
+    ],
+    chatDemo: "Try: \"I have a performance review next week and I've been grinding every night but it never feels like enough.\"",
+    checkinNote: "Sliders: Stress + Energy (colors flip directions — stress goes red at high, energy goes green at high). Buttons: Work habits (did you log off on time?) + Self-care.",
+  },
+  {
     id: "client-004",
     name: "Maya K.",
     emoji: "📚",

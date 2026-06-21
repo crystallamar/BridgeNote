@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, ReferenceLine, ReferenceArea, BarChart, Bar,
+  ResponsiveContainer, ReferenceLine, ReferenceArea, BarChart, Bar, Cell,
 } from "recharts";
 import { api } from "../../services/api";
 import "./Dashboard.css";
@@ -13,6 +13,7 @@ const DEMO_CLIENTS = [
   { client_id: "client-002", name: "Jordan R.", tag: "Depression · GRAPES focus" },
   { client_id: "client-003", name: "Sam T.",    tag: "PTSD Recovery" },
   { client_id: "client-004", name: "Maya K.",   tag: "Anxiety · Depression · Student (pre-med)" },
+  { client_id: "client-005", name: "Ethan R.",  tag: "Burnout · Work Anxiety" },
 ];
 
 const PRESET_SLIDERS = [
@@ -47,6 +48,28 @@ const PRESET_GROUPS = [
     items: ["Attended class", "Studied", "Asked for help", "Took a break", "Submitted work"],
   },
 ];
+
+// Which direction is "good" for each slider key
+const SLIDER_DIRECTION = {
+  anxiety:    "lower_better",
+  depression: "lower_better",
+  stress:     "lower_better",
+  energy:     "higher_better",
+  motivation: "higher_better",
+  safety:     "higher_better",
+  sleep:      "higher_better",
+};
+
+// Color a slider value (1–10) based on its key's direction
+function sliderValueColor(val, key) {
+  if (val == null) return "#ccc";
+  const dir = SLIDER_DIRECTION[key] || "higher_better";
+  const isLow = val <= 3, isMid = val <= 6;
+  if (dir === "lower_better") {
+    return isLow ? "#2ecc71" : isMid ? "#f39c12" : "#e74c3c";
+  }
+  return isLow ? "#e74c3c" : isMid ? "#f39c12" : "#2ecc71";
+}
 
 // Color by mood score 1–5
 function moodColor(score) {
@@ -89,16 +112,29 @@ export default function TherapistDashboard() {
   const [configModal, setConfigModal] = useState(false);
   const [checkinConfig, setCheckinConfig] = useState(null);
   const [savingConfig, setSavingConfig] = useState(false);
+  const [visitedTabs, setVisitedTabs] = useState(new Set(["overview"]));
+  const [summaries, setSummaries] = useState({});  // conv_id → {summary, loading}
 
   // Local config editor state
   const [activeSliders, setActiveSliders] = useState([]);
   const [activeGroups, setActiveGroups] = useState([]);
+
+  // Notification helpers (localStorage-based)
+  const markClientViewed = (clientId) => {
+    localStorage.setItem(`bn_viewed_${clientId}`, new Date().toISOString());
+  };
+  const clientHasUnread = (clientId) => {
+    return !localStorage.getItem(`bn_viewed_${clientId}`);
+  };
 
   const selectClient = async (client) => {
     setSelectedClient(client);
     setLoading(true);
     setActiveTab("overview");
     setData(null);
+    setVisitedTabs(new Set(["overview"]));
+    setSummaries({});
+    markClientViewed(client.client_id);
     try {
       const [d, cfg] = await Promise.all([
         api.getTherapistDashboard(client.client_id),
@@ -110,6 +146,24 @@ export default function TherapistDashboard() {
       setData(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const switchTab = (tab) => {
+    setActiveTab(tab);
+    setVisitedTabs(prev => new Set([...prev, tab]));
+    // Lazy-load summaries when Conversations tab first opened
+    if (tab === "conversations" && data?.conversations?.length > 0) {
+      data.conversations.forEach(conv => {
+        if (!summaries[conv.conversation_id]) {
+          setSummaries(prev => ({ ...prev, [conv.conversation_id]: { loading: true } }));
+          api.getConversationSummary(conv.conversation_id).then(res => {
+            setSummaries(prev => ({ ...prev, [conv.conversation_id]: { summary: res.summary, loading: false } }));
+          }).catch(() => {
+            setSummaries(prev => ({ ...prev, [conv.conversation_id]: { summary: null, loading: false } }));
+          });
+        }
+      });
     }
   };
 
@@ -174,7 +228,10 @@ export default function TherapistDashboard() {
         <div className="client-grid">
           {DEMO_CLIENTS.map(c => (
             <button key={c.client_id} className="client-card" onClick={() => selectClient(c)}>
-              <div className="client-avatar">{c.name.split(" ").map(w => w[0]).join("")}</div>
+              <div className="client-avatar-wrap">
+                <div className="client-avatar">{c.name.split(" ").map(w => w[0]).join("")}</div>
+                {clientHasUnread(c.client_id) && <span className="notif-dot" />}
+              </div>
               <div className="client-info">
                 <div className="client-name">{c.name}</div>
               </div>
@@ -221,9 +278,14 @@ export default function TherapistDashboard() {
       {!loading && (
         <>
           <div className="dash-tabs">
-            {["overview", "checkins", "conversations"].map(t => (
-              <button key={t} className={`tab ${activeTab === t ? "active" : ""}`} onClick={() => setActiveTab(t)}>
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+            {[
+              { key: "overview",       label: "Overview" },
+              { key: "checkins",       label: "Check-ins",     badge: !visitedTabs.has("checkins") && data?.recent_checkins?.length > 0 },
+              { key: "conversations",  label: "Conversations",  badge: !visitedTabs.has("conversations") && data?.conversations?.length > 0 },
+            ].map(t => (
+              <button key={t.key} className={`tab ${activeTab === t.key ? "active" : ""}`} onClick={() => switchTab(t.key)}>
+                {t.label}
+                {t.badge && <span className="tab-badge" />}
               </button>
             ))}
           </div>
@@ -302,20 +364,27 @@ export default function TherapistDashboard() {
                 <>
                   <h3 style={{ marginTop: 28 }}>Slider metrics</h3>
                   <div className="slider-charts-grid">
-                    {checkinConfig.sliders.map(s => (
-                      <div key={s.key} className="slider-chart-block">
-                        <p className="slider-chart-title" style={{ color: s.color }}>{s.label}</p>
-                        <ResponsiveContainer width="100%" height={160}>
-                          <BarChart data={[...data.mood_trend].reverse().slice(0, 14)} margin={{ left: -20, right: 4, top: 4 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="date" tick={{ fontSize: 9 }} />
-                            <YAxis domain={[0, 10]} ticks={[0, 5, 10]} tick={{ fontSize: 10 }} />
-                            <Tooltip formatter={(v) => [`${v}/10`, s.label]} />
-                            <Bar dataKey={s.key} fill={s.color} name={s.label} radius={[3, 3, 0, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    ))}
+                    {checkinConfig.sliders.map(s => {
+                      const chartData = [...data.mood_trend].reverse().slice(0, 14);
+                      return (
+                        <div key={s.key} className="slider-chart-block">
+                          <p className="slider-chart-title">{s.label}</p>
+                          <ResponsiveContainer width="100%" height={160}>
+                            <BarChart data={chartData} margin={{ left: -20, right: 4, top: 4 }}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                              <XAxis dataKey="date" tick={{ fontSize: 9 }} />
+                              <YAxis domain={[0, 10]} ticks={[0, 5, 10]} tick={{ fontSize: 10 }} />
+                              <Tooltip formatter={(v) => [`${v}/10`, s.label]} />
+                              <Bar dataKey={s.key} name={s.label} radius={[3, 3, 0, 0]}>
+                                {chartData.map((entry, idx) => (
+                                  <Cell key={idx} fill={sliderValueColor(entry[s.key], s.key)} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      );
+                    })}
                   </div>
                 </>
               )}
@@ -372,13 +441,21 @@ export default function TherapistDashboard() {
           {activeTab === "conversations" && (
             <div className="dash-section">
               <h3>Chatbot session summaries</h3>
-              {data?.chat_summaries?.length > 0 ? (
-                data.chat_summaries.map(s => (
-                  <div key={s.conversation_id} className="summary-card">
-                    <div className="summary-meta">{s.message_count} messages · {s.conversation_id.slice(0,8)}…</div>
-                    <p>{s.summary}</p>
-                  </div>
-                ))
+              {data?.conversations?.length > 0 ? (
+                data.conversations.map(conv => {
+                  const s = summaries[conv.conversation_id];
+                  return (
+                    <div key={conv.conversation_id} className="summary-card">
+                      <div className="summary-meta">
+                        {conv.message_count} messages · {conv.conversation_id.slice(0,8)}…
+                        {conv.last_message_at && <span> · {conv.last_message_at.slice(0,10)}</span>}
+                      </div>
+                      {!s && <p className="summary-loading">Loading summary…</p>}
+                      {s?.loading && <p className="summary-loading">Generating AI summary…</p>}
+                      {s && !s.loading && <p>{s.summary || "[Summary unavailable]"}</p>}
+                    </div>
+                  );
+                })
               ) : (
                 <p className="empty-state">No chatbot conversations yet.</p>
               )}

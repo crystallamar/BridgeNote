@@ -306,6 +306,86 @@ MAYA = {
 }
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# CLIENT 5: Ethan — tech burnout, high-functioning, relatable to tech audience
+# ──────────────────────────────────────────────────────────────────────────────
+ETHAN = {
+    "id": "client-005",
+    "name": "Ethan R.",
+    "context": {
+        "therapist_id": THERAPIST_ID,
+        "client_id": "client-005",
+        "client_name": "Ethan R.",
+        "treatment_goals": [
+            "Set sustainable work-life boundaries",
+            "Identify early burnout warning signals before they escalate",
+            "Challenge the 'my worth = my output' belief pattern",
+            "Reconnect with non-work interests and identity",
+        ],
+        "diagnoses": ["Adjustment Disorder with anxiety features", "Occupational burnout"],
+        "medications": [],
+        "triggers": [
+            "sprint deadlines and scope creep",
+            "critical code review feedback",
+            "Slack notifications after hours",
+            "teammates getting promoted or recognized",
+            "feeling behind on industry skills",
+        ],
+        "strengths": [
+            "analytically sharp and self-aware when not depleted",
+            "strong teammate — helps others even when burned out",
+            "gym habit when maintained",
+            "honest about what isn't working once he gets going in session",
+            "dry humor",
+        ],
+        "notes": (
+            "Ethan came to therapy after a routine physical flagged elevated blood pressure. Doctor asked about stress. "
+            "He frames everything as a problem to debug and fix — initially wanted a '5-step plan to not be burned out.' "
+            "We're working on the mindset shift from output-as-identity to being a person who happens to have a job. "
+            "Progress has been real but he resists slowing down when work is pressured. Watch for the 'just this sprint' pattern. "
+            "No Slack after 7pm was the agreed boundary this week. Follow up on this. Practical, behavioral interventions work best — "
+            "avoid abstract framing early in session. Save the values work for when he's warmed up."
+        ),
+        "last_session_date": (datetime.utcnow() - timedelta(days=4)).strftime("%Y-%m-%d"),
+        "last_session_summary": (
+            "Talked through the 'just this sprint' pattern — Ethan recognized it's been 3 months of 'just this sprint.' "
+            "Named the cost: no gym, no hobbies, relationships going on autopilot. Agreed to one hard boundary: no Slack after 7pm. "
+            "Also explored where the 'worth = output' belief came from. Cautious but interested. "
+            "Left session saying he'd try the boundary 'at least Tuesday.' That's progress for Ethan."
+        ),
+    },
+    "checkin_config": {
+        "sliders": [
+            {"key": "stress",  "label": "Stress",   "color": "#e67e22"},
+            {"key": "energy",  "label": "Energy",   "color": "#2ecc71"},
+        ],
+        "button_groups": [
+            {
+                "key": "work_habits",
+                "label": "Work habits today",
+                "multi": True,
+                "items": ["Left work on time", "Took a real lunch break", "No Slack after 7pm", "Said no to a request", "Took a walk or break"],
+            },
+            {
+                "key": "self_care",
+                "label": "Self-care",
+                "multi": True,
+                "items": ["Exercised", "Ate properly", "Slept 7+ hours", "Did something non-work", "Connected with someone"],
+            },
+        ],
+    },
+    "journals": [
+        "Worked until 11pm again. Told myself it was just for this sprint. It's been three months of 'just this sprint.'",
+        "Left at 5:30 and didn't open Slack. Felt weirdly anxious the whole evening, like I was forgetting something. But I didn't go back.",
+        "Got critical code review feedback. Tried not to take it personally. Still spent the evening replaying it.",
+        "Skipped lunch to push through a feature. Had a headache by 3pm. Something has to change.",
+        "Actually talked to my manager about scope. Told him the timeline wasn't realistic. He listened. Felt strange — in a good way.",
+        None,
+        "Realized I haven't done anything I actually like in weeks. When did that happen?",
+    ],
+}
+
+
 async def seed_client(client_data: dict):
     cid = client_data["id"]
     name = client_data["name"]
@@ -360,7 +440,7 @@ async def main():
     print("🌱 BridgeNote Demo Seed")
     print("=" * 40)
 
-    for client in [ALEX, JORDAN, SAM, MAYA]:
+    for client in [ALEX, JORDAN, SAM, MAYA, ETHAN]:
         await seed_client(client)
 
     print("\n✅ Done! Start the backend (uvicorn main:app --reload) and frontend (npm start) to explore the demo.")
@@ -369,6 +449,7 @@ async def main():
     print("  client-002 — Jordan R. (Depression, GRAPES focus)")
     print("  client-003 — Sam T.    (PTSD recovery)")
     print("  client-004 — Maya K.   (College anxiety/depression, biweekly)")
+    print("  client-005 — Ethan R.  (Tech burnout, boundary-setting)")
     print("\nTherapist ID: therapist-001")
 
 

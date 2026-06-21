@@ -57,25 +57,27 @@ async def fetch_context(client_id: str):
 
 @router.get("/dashboard/{client_id}")
 async def therapist_dashboard(client_id: str):
-    """Aggregate view: mood trends, recent journals, and chat summaries."""
-    checkins = await get_recent_checkins(client_id, limit=30)
-    mood_trend = await get_mood_trend(client_id, days=30)
-    context = await get_therapist_context(client_id)
+    """Aggregate view: mood trends, recent journals, conversation metadata.
+    Summaries are NOT generated here — fetch /chat/summary/{id} lazily per conversation."""
+    import asyncio
+    checkins, mood_trend, context, conv_ids = await asyncio.gather(
+        get_recent_checkins(client_id, limit=30),
+        get_mood_trend(client_id, days=30),
+        get_therapist_context(client_id),
+        get_client_conversations(client_id),
+    )
 
-    # Get summaries of recent conversations (graceful if Claude API unavailable)
-    conv_ids = await get_client_conversations(client_id)
-    chat_summaries = []
-    for conv_id in list(conv_ids)[:5]:
+    # Return conversation metadata only — no Claude calls here
+    conversations = []
+    conv_list = list(conv_ids)[:10]
+    for conv_id in conv_list:
         messages = await get_conversation(conv_id)
         if messages:
-            try:
-                summary = await summarize_conversation(messages)
-            except Exception:
-                summary = f"[{len(messages)} messages — summary unavailable]"
-            chat_summaries.append({
+            last_ts = messages[-1].get("timestamp", "") if messages else ""
+            conversations.append({
                 "conversation_id": conv_id,
                 "message_count": len(messages),
-                "summary": summary,
+                "last_message_at": last_ts,
             })
 
     return {
@@ -83,6 +85,19 @@ async def therapist_dashboard(client_id: str):
         "client_name": context.get("client_name") if context else "Unknown",
         "mood_trend": mood_trend,
         "recent_checkins": checkins[:7],
-        "chat_summaries": chat_summaries,
+        "conversations": conversations,
         "therapist_context": context,
     }
+
+
+@router.get("/conversation-summary/{conv_id}")
+async def conversation_summary(conv_id: str):
+    """Generate an AI summary for a single conversation — called lazily from the UI."""
+    messages = await get_conversation(conv_id)
+    if not messages:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    try:
+        summary = await summarize_conversation(messages)
+    except Exception:
+        summary = f"[{len(messages)} messages — summary unavailable]"
+    return {"conversation_id": conv_id, "message_count": len(messages), "summary": summary}
