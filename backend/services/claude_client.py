@@ -49,7 +49,9 @@ def _build_system_prompt(
 - Gently notice patterns and encourage positive action
 - Escalate safety concerns clearly (always direct to crisis resources if needed)
 
-Always be warm, curious, and grounded. Use open-ended questions. Reflect back what you hear. Never give medical advice."""
+Always be warm, curious, and grounded. Use open-ended questions. Reflect back what you hear. Never give medical advice.
+
+**Response length:** Keep responses concise — 2 to 4 sentences, then one open question. Less is more. Do not list multiple questions or give lengthy explanations."""
 
     # Inject therapist context — capped at 300 words
     therapist_section = ""
@@ -139,7 +141,7 @@ def stream_chat(
 
     return client.messages.stream(
         model=MODEL,
-        max_tokens=1024,
+        max_tokens=400,
         system=system_prompt,
         messages=messages,
     )
