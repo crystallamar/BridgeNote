@@ -62,13 +62,16 @@ async def therapist_dashboard(client_id: str):
     mood_trend = await get_mood_trend(client_id, days=30)
     context = await get_therapist_context(client_id)
 
-    # Get summaries of recent conversations
+    # Get summaries of recent conversations (graceful if Claude API unavailable)
     conv_ids = await get_client_conversations(client_id)
     chat_summaries = []
-    for conv_id in list(conv_ids)[:5]:  # Last 5 conversations
+    for conv_id in list(conv_ids)[:5]:
         messages = await get_conversation(conv_id)
         if messages:
-            summary = await summarize_conversation(messages)
+            try:
+                summary = await summarize_conversation(messages)
+            except Exception:
+                summary = f"[{len(messages)} messages — summary unavailable]"
             chat_summaries.append({
                 "conversation_id": conv_id,
                 "message_count": len(messages),

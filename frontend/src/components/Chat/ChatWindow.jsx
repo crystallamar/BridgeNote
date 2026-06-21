@@ -10,17 +10,19 @@ const SUGGESTED_STARTERS = [
 ];
 
 export default function ChatWindow({ clientId }) {
-  const { messages, sendMessage, isStreaming, reset } = useChat(clientId);
+  const { messages, sendMessage, seedMessage, isStreaming, reset } = useChat(clientId);
   const [input, setInput] = useState("");
-  const [backendOnline, setBackendOnline] = useState(null); // null = checking
+  const [backendOnline, setBackendOnline] = useState(null);
   const bottomRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/checkin/config/${clientId}`, { signal: AbortSignal.timeout(4000) })
-      .then(r => { if (!cancelled) setBackendOnline(r.ok); })
-      .catch(() => { if (!cancelled) setBackendOnline(false); });
-    return () => { cancelled = true; };
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    fetch(`/checkin/config/${clientId}`, { signal: controller.signal })
+      .then(r => { clearTimeout(timer); if (!cancelled) setBackendOnline(r.ok); })
+      .catch(() => { clearTimeout(timer); if (!cancelled) setBackendOnline(false); });
+    return () => { cancelled = true; controller.abort(); clearTimeout(timer); };
   }, [clientId]);
 
   useEffect(() => {
@@ -40,8 +42,9 @@ export default function ChatWindow({ clientId }) {
     }
   };
 
+  // Starter clicks make the AI open with that question (not send as a user message)
   const handleStarterClick = (text) => {
-    sendMessage(text);
+    seedMessage(text);
   };
 
   return (

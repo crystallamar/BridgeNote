@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, ReferenceLine, BarChart, Bar,
+  ResponsiveContainer, ReferenceLine, ReferenceArea, BarChart, Bar,
 } from "recharts";
 import { api } from "../../services/api";
 import "./Dashboard.css";
@@ -175,7 +175,6 @@ export default function TherapistDashboard() {
               <div className="client-avatar">{c.name.split(" ").map(w => w[0]).join("")}</div>
               <div className="client-info">
                 <div className="client-name">{c.name}</div>
-                <div className="client-tag">{c.tag}</div>
               </div>
               <span className="client-arrow">→</span>
             </button>
@@ -201,7 +200,9 @@ export default function TherapistDashboard() {
         </button>
         <div className="dash-title-block">
           <h1>{selectedClient.name}</h1>
-          <p className="dash-subtitle">{selectedClient.tag}</p>
+          {data?.therapist_context?.diagnoses?.length > 0 && (
+            <p className="dash-subtitle">{data.therapist_context.diagnoses.join(" · ")}</p>
+          )}
         </div>
         <div className="dash-header-actions">
           <button className="btn-secondary" onClick={openConfigModal} title="Configure which sliders and buttons appear on this client's check-in form">

@@ -78,10 +78,16 @@ export function useChat(clientId) {
     [clientId, conversationId, isStreaming]
   );
 
+  // Add a seeded assistant message (no API call — shows as AI opening question)
+  const seedMessage = useCallback((content) => {
+    setMessages([{ role: "assistant", content, timestamp: new Date().toISOString() }]);
+    setConversationId(null);
+  }, []);
+
   const reset = useCallback(() => {
     setMessages([]);
     setConversationId(null);
   }, []);
 
-  return { messages, sendMessage, isStreaming, conversationId, reset };
+  return { messages, sendMessage, seedMessage, isStreaming, conversationId, reset };
 }
