@@ -84,3 +84,34 @@
 .guide-footer code {
   background: #eee; padding: 1px 6px; border-radius: 4px; font-size: 12px;
 }
+
+/* ── Feature highlights ── */
+.guide-features {
+  padding: 20px 24px 16px;
+  border-top: 1px solid #eee;
+}
+.guide-features-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.guide-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.guide-feature-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f9f9fb;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.guide-feature-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+.guide-feature-item strong { font-size: 13px; display: block; margin-bottom: 2px; color: #333; }
+.guide-feature-item p { font-size: 12px; color: #777; margin: 0; line-height: 1.4; }

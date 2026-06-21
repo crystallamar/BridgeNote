@@ -252,3 +252,24 @@
   padding: 10px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
 }
 .btn-secondary:hover { background: #ebebeb; }
+
+/* ── Slider charts grid ── */
+.slider-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.slider-chart-block {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px 10px 8px;
+}
+.slider-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 8px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

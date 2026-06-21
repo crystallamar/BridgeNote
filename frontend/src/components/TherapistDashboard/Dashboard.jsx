@@ -301,18 +301,22 @@ export default function TherapistDashboard() {
               {checkinConfig?.sliders?.length > 0 && data?.mood_trend?.length > 0 && (
                 <>
                   <h3 style={{ marginTop: 28 }}>Slider metrics</h3>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <BarChart data={[...data.mood_trend].reverse().slice(0, 14)} margin={{ left: -20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                      <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} />
-                      <Tooltip />
-                      <Legend />
-                      {checkinConfig.sliders.map(s => (
-                        <Bar key={s.key} dataKey={s.key} fill={s.color} name={s.label} radius={[4,4,0,0]} />
-                      ))}
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <div className="slider-charts-grid">
+                    {checkinConfig.sliders.map(s => (
+                      <div key={s.key} className="slider-chart-block">
+                        <p className="slider-chart-title" style={{ color: s.color }}>{s.label}</p>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <BarChart data={[...data.mood_trend].reverse().slice(0, 14)} margin={{ left: -20, right: 4, top: 4 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="date" tick={{ fontSize: 9 }} />
+                            <YAxis domain={[0, 10]} ticks={[0, 5, 10]} tick={{ fontSize: 10 }} />
+                            <Tooltip formatter={(v) => [`${v}/10`, s.label]} />
+                            <Bar dataKey={s.key} fill={s.color} name={s.label} radius={[3, 3, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ))}
+                  </div>
                 </>
               )}
             </div>
