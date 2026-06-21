@@ -19,11 +19,11 @@ THERAPIST_ID = "therapist-001"
 # ──────────────────────────────────────────────────────────────────────────────
 ALEX = {
     "id": "client-001",
-    "name": "Alex M.",
+    "name": "Alex Morales",
     "context": {
         "therapist_id": THERAPIST_ID,
         "client_id": "client-001",
-        "client_name": "Alex M.",
+        "client_name": "Alex Morales",
         "treatment_goals": [
             "Reduce anxiety in workplace performance settings",
             "Build consistent wind-down sleep routine",
@@ -82,11 +82,11 @@ ALEX = {
 # ──────────────────────────────────────────────────────────────────────────────
 JORDAN = {
     "id": "client-002",
-    "name": "Jordan R.",
+    "name": "Jordan Reid",
     "context": {
         "therapist_id": THERAPIST_ID,
         "client_id": "client-002",
-        "client_name": "Jordan R.",
+        "client_name": "Jordan Reid",
         "treatment_goals": [
             "Rebuild daily structure and routine",
             "Use GRAPES framework daily to counteract depression",
@@ -151,11 +151,11 @@ JORDAN = {
 # ──────────────────────────────────────────────────────────────────────────────
 SAM = {
     "id": "client-003",
-    "name": "Sam T.",
+    "name": "Sam Tran",
     "context": {
         "therapist_id": THERAPIST_ID,
         "client_id": "client-003",
-        "client_name": "Sam T.",
+        "client_name": "Sam Tran",
         "treatment_goals": [
             "Build safety and stability before deeper trauma processing",
             "Develop grounding toolkit for flashbacks and hypervigilance",
@@ -228,11 +228,11 @@ SAM = {
 # ──────────────────────────────────────────────────────────────────────────────
 MAYA = {
     "id": "client-004",
-    "name": "Maya K.",
+    "name": "Maya Krishnamurthy",
     "context": {
         "therapist_id": THERAPIST_ID,
         "client_id": "client-004",
-        "client_name": "Maya K.",
+        "client_name": "Maya Krishnamurthy",
         "treatment_goals": [
             "Build self-compassion and separate self-worth from academic performance",
             "Reduce perfectionism-driven anxiety around grades and family expectations",
@@ -307,51 +307,56 @@ MAYA = {
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# CLIENT 5: Ethan — tech burnout, high-functioning, relatable to tech audience
+# CLIENT 5: Ethan — CS junior, burnout + imposter syndrome + parental pressure
 # ──────────────────────────────────────────────────────────────────────────────
 ETHAN = {
     "id": "client-005",
-    "name": "Ethan R.",
+    "name": "Ethan Rhodes",
     "context": {
         "therapist_id": THERAPIST_ID,
         "client_id": "client-005",
-        "client_name": "Ethan R.",
+        "client_name": "Ethan Rhodes",
         "treatment_goals": [
-            "Set sustainable work-life boundaries",
-            "Identify early burnout warning signals before they escalate",
-            "Challenge the 'my worth = my output' belief pattern",
-            "Reconnect with non-work interests and identity",
+            "Recognize and respond to early burnout signals before they escalate",
+            "Challenge the 'my GPA = my worth' belief pattern",
+            "Build self-trust: learn to act on his own judgment, not just external validation",
+            "Set sustainable academic limits — learn what 'good enough' means and tolerate it",
         ],
-        "diagnoses": ["Adjustment Disorder with anxiety features", "Occupational burnout"],
+        "diagnoses": ["Adjustment Disorder with anxiety features", "Burnout (academic)"],
         "medications": [],
         "triggers": [
-            "sprint deadlines and scope creep",
-            "critical code review feedback",
-            "Slack notifications after hours",
-            "teammates getting promoted or recognized",
-            "feeling behind on industry skills",
+            "exam grades, especially when peers score higher",
+            "internship rejections or seeing peers land offers",
+            "parents asking 'how's school going' or 'what are your plans'",
+            "feeling out of his depth in class or group projects",
+            "TA/professor moments that feel like he's 'not cut out for this'",
         ],
         "strengths": [
-            "analytically sharp and self-aware when not depleted",
-            "strong teammate — helps others even when burned out",
-            "gym habit when maintained",
-            "honest about what isn't working once he gets going in session",
-            "dry humor",
+            "genuinely sharp — his imposter syndrome is telling him lies",
+            "strong sense of loyalty; goes out of his way to help friends with coursework",
+            "funny and self-deprecating when he's not in his head",
+            "starting to show some openness in session — still guarded, but cracks forming",
+            "athletic background; gym habit when not burned out",
         ],
         "notes": (
-            "Ethan came to therapy after a routine physical flagged elevated blood pressure. Doctor asked about stress. "
-            "He frames everything as a problem to debug and fix — initially wanted a '5-step plan to not be burned out.' "
-            "We're working on the mindset shift from output-as-identity to being a person who happens to have a job. "
-            "Progress has been real but he resists slowing down when work is pressured. Watch for the 'just this sprint' pattern. "
-            "No Slack after 7pm was the agreed boundary this week. Follow up on this. Practical, behavioral interventions work best — "
-            "avoid abstract framing early in session. Save the values work for when he's warmed up."
+            "Ethan is a junior CS major at a competitive state university. Middle-class background — parents are an engineer "
+            "and an accountant. He was the 'smart one' growing up and the first in his extended family to attend a highly "
+            "ranked program. That identity is now a trap: anything less than the top feels like failure. "
+            "Imposter syndrome is severe. He compares himself to peers who've been coding since age 12 and feels perpetually "
+            "behind even when his work is objectively strong. He's overcommitted — full courseload, club leadership, "
+            "part-time tutoring, recruiting for internships. Thinks rest is 'wasted time.' "
+            "He came to therapy only because a professor mandated counseling after he failed to turn in two assignments "
+            "in a row — he framed it as 'fixing a productivity problem.' He is slowly realizing it's bigger than that. "
+            "Do NOT challenge the parental relationship directly yet — he's not ready. Focus on behaviors and internal beliefs. "
+            "CBT works well. Keeps a tight lid on emotion but he's warmer than he appears."
         ),
         "last_session_date": (datetime.utcnow() - timedelta(days=4)).strftime("%Y-%m-%d"),
         "last_session_summary": (
-            "Talked through the 'just this sprint' pattern — Ethan recognized it's been 3 months of 'just this sprint.' "
-            "Named the cost: no gym, no hobbies, relationships going on autopilot. Agreed to one hard boundary: no Slack after 7pm. "
-            "Also explored where the 'worth = output' belief came from. Cautious but interested. "
-            "Left session saying he'd try the boundary 'at least Tuesday.' That's progress for Ethan."
+            "Talked through the 'I'll rest after this semester' pattern — Ethan acknowledged he's been saying that since freshman year. "
+            "Named the real cost: no exercise, eating junk, friendships going on autopilot, stopped playing guitar entirely. "
+            "Explored where the 'worth = GPA' belief came from — his dad's reaction to his first B in high school was pivotal. "
+            "Set one concrete goal: if an assignment is 85% done and he's been at it 3+ hours, submit it. "
+            "That's a huge ask for Ethan. Ended session more reflective than usual. Progress."
         ),
     },
     "checkin_config": {
@@ -361,27 +366,27 @@ ETHAN = {
         ],
         "button_groups": [
             {
-                "key": "work_habits",
-                "label": "Work habits today",
+                "key": "academic",
+                "label": "Academic habits today",
                 "multi": True,
-                "items": ["Left work on time", "Took a real lunch break", "No Slack after 7pm", "Said no to a request", "Took a walk or break"],
+                "items": ["Attended class", "Submitted without over-polishing", "Took a break when tired", "Asked for help", "Studied without grinding past midnight"],
             },
             {
                 "key": "self_care",
                 "label": "Self-care",
                 "multi": True,
-                "items": ["Exercised", "Ate properly", "Slept 7+ hours", "Did something non-work", "Connected with someone"],
+                "items": ["Ate properly", "Slept 7+ hours", "Exercised or moved", "Did something non-academic", "Connected with a friend"],
             },
         ],
     },
     "journals": [
-        "Worked until 11pm again. Told myself it was just for this sprint. It's been three months of 'just this sprint.'",
-        "Left at 5:30 and didn't open Slack. Felt weirdly anxious the whole evening, like I was forgetting something. But I didn't go back.",
-        "Got critical code review feedback. Tried not to take it personally. Still spent the evening replaying it.",
-        "Skipped lunch to push through a feature. Had a headache by 3pm. Something has to change.",
-        "Actually talked to my manager about scope. Told him the timeline wasn't realistic. He listened. Felt strange — in a good way.",
+        "Pulled an all-nighter for an assignment. Got a 91. My roommate got a 94 and told me he spent 2 hours on it. I spent 12. I don't understand.",
+        "Didn't go to the gym. Haven't been in three weeks. I keep telling myself I'll go when things slow down. Things don't slow down.",
+        "Bombed an internship interview. Blanked on a data structures question I actually know. Got the rejection 2 hours later. Called home and said it went okay.",
+        "Office hours today. Asked what I thought was a dumb question. The TA answered it like it was obvious. Couldn't focus in class after.",
+        "Spent two hours helping my friend debug their project. We figured it out together. Felt like I actually knew something for once.",
         None,
-        "Realized I haven't done anything I actually like in weeks. When did that happen?",
+        "My dad texted to ask if I've applied to Google yet. I haven't even finished my resume. Everything feels three steps behind where it should be.",
     ],
 }
 

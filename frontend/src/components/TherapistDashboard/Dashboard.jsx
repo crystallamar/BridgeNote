@@ -9,11 +9,11 @@ import "./Dashboard.css";
 const THERAPIST_ID = "therapist-001";
 
 const DEMO_CLIENTS = [
-  { client_id: "client-001", name: "Alex M.",   tag: "GAD · Social Anxiety" },
-  { client_id: "client-002", name: "Jordan R.", tag: "Depression · GRAPES focus" },
-  { client_id: "client-003", name: "Sam T.",    tag: "PTSD Recovery" },
-  { client_id: "client-004", name: "Maya K.",   tag: "Anxiety · Depression · Student (pre-med)" },
-  { client_id: "client-005", name: "Ethan R.",  tag: "Burnout · Work Anxiety" },
+  { client_id: "client-001", name: "Alex Morales",       tag: "GAD · Social Anxiety" },
+  { client_id: "client-002", name: "Jordan Reid",        tag: "Depression · GRAPES focus" },
+  { client_id: "client-003", name: "Sam Tran",           tag: "PTSD Recovery" },
+  { client_id: "client-004", name: "Maya Krishnamurthy", tag: "Anxiety · Depression · Student (pre-med)" },
+  { client_id: "client-005", name: "Ethan Rhodes",       tag: "Burnout · Imposter Syndrome · Student" },
 ];
 
 const PRESET_SLIDERS = [
